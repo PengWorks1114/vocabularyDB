@@ -4,6 +4,7 @@ import "./globals.css";
 import "@/i18n/i18n-client";
 import { AuthProvider } from "@/components/auth-provider";
 import { NavBar } from "@/components/nav-bar";
+import { StudyProvider } from "@/components/study/study-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Wrap with AuthProvider so the entire app can use useAuth */}
+        {/* Wrap with providers so the entire app can use contexts */}
         <AuthProvider>
-          <NavBar />
-          {children}
+          <StudyProvider>
+            <NavBar />
+            {children}
+          </StudyProvider>
         </AuthProvider>
       </body>
     </html>

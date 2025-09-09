@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Heart, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { MemorizeSettings } from "@/components/study/MemorizeSettings";
 
 function masteryLevelMin(score: number) {
   if (score >= 90) return 90;
@@ -141,6 +142,7 @@ export function WordList({ wordbookId }: WordListProps) {
   const [bulkMode, setBulkMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [studyOpen, setStudyOpen] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -508,8 +510,14 @@ export function WordList({ wordbookId }: WordListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
+    <>
+      <MemorizeSettings
+        open={studyOpen}
+        onOpenChange={setStudyOpen}
+        words={words}
+      />
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
         {!bulkMode && (
         <Dialog open={createOpen} onOpenChange={(o) => {
           setCreateOpen(o);
@@ -663,7 +671,10 @@ export function WordList({ wordbookId }: WordListProps) {
         </Button>
         )}
         {!bulkMode && (
-        <Button className="bg-orange-500 text-black hover:bg-orange-600">
+        <Button
+          className="bg-orange-500 text-black hover:bg-orange-600"
+          onClick={() => setStudyOpen(true)}
+        >
           {t("wordList.studyWords")}
         </Button>
         )}
@@ -1188,6 +1199,7 @@ export function WordList({ wordbookId }: WordListProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

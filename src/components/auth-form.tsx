@@ -34,7 +34,11 @@ const formSchema = z.object({
     .min(6, { message: "Password must be at least 6 characters." }),
 });
 
-export function AuthForm() {
+interface AuthFormProps {
+  onSuccess?: () => void;
+}
+
+export function AuthForm({ onSuccess }: AuthFormProps) {
   const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +68,7 @@ export function AuthForm() {
       }
       // On success, navigate to the home page or close the dialog
       console.log("Authentication successful!");
+      onSuccess?.();
     } catch (err: unknown) {
       // Check if err is an Error object
       if (err instanceof Error) {
@@ -85,6 +90,7 @@ export function AuthForm() {
     try {
       await signInWithPopup(auth, provider);
       console.log("Google login successful!");
+      onSuccess?.();
     } catch (err: unknown) {
       // Check if err is an Error object
       if (err instanceof Error) {

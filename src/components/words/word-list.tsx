@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Heart, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Link from "next/link";
 
 function masteryLevelMin(score: number) {
   if (score >= 90) return 90;
@@ -663,8 +664,13 @@ export function WordList({ wordbookId }: WordListProps) {
         </Button>
         )}
         {!bulkMode && (
-        <Button className="bg-orange-500 text-black hover:bg-orange-600">
-          {t("wordList.studyWords")}
+        <Button
+          className="bg-orange-500 text-black hover:bg-orange-600"
+          asChild
+        >
+          <Link href={`/wordbooks/${wordbookId}/study`}>
+            {t("wordList.studyWords")}
+          </Link>
         </Button>
         )}
         {bulkMode ? (

@@ -56,7 +56,7 @@ export const getWordbooksByUserId = async (
   const querySnapshot = await getDocs(colRef);
   const wordbooks: Wordbook[] = [];
   querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data() as Wordbook;
+    const data = docSnap.data() as Omit<Wordbook, "id">;
     if (!data.trashed) wordbooks.push({ id: docSnap.id, ...data });
   });
   return wordbooks;
@@ -114,7 +114,7 @@ export const getTrashedWordbooksByUserId = async (
   const snapshot = await getDocs(colRef);
   const wordbooks: Wordbook[] = [];
   snapshot.forEach((docSnap) => {
-    const data = docSnap.data() as Wordbook;
+    const data = docSnap.data() as Omit<Wordbook, "id">;
     if (data.trashed) wordbooks.push({ id: docSnap.id, ...data });
   });
   return wordbooks;
@@ -146,7 +146,8 @@ export const getWordbook = async (
   const ref = doc(db, "users", userId, "wordbooks", wordbookId);
   const snap = await getDoc(ref);
   if (!snap.exists()) return null;
-  return { id: snap.id, ...(snap.data() as Wordbook) };
+  const data = snap.data() as Omit<Wordbook, "id">;
+  return { id: snap.id, ...data };
 };
 
 // ------------------- Word CRUD -------------------

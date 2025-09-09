@@ -40,6 +40,11 @@ i18n
             clear: "Empty Trash",
             clearing: "Clearing...",
           },
+          studyPage: {
+            recite: "Recite Words",
+            dictation: "Dictation",
+            totalWords: "Total words: {{count}}",
+          },
           backToList: "Back to wordbooks",
           wordbookList: {
             title: "My Wordbooks",
@@ -155,6 +160,11 @@ i18n
             clear: "清空垃圾桶",
             clearing: "清空中...",
           },
+          studyPage: {
+            recite: "背單字",
+            dictation: "默寫單字",
+            totalWords: "目前整體共{{count}}個單字",
+          },
           backToList: "返回單字本列表",
           wordbookList: {
             title: "我的單字本",
@@ -268,6 +278,11 @@ i18n
             empty: "ゴミ箱は空です",
             clear: "ゴミ箱を空にする",
             clearing: "消去中...",
+          },
+          studyPage: {
+            recite: "単語を暗記",
+            dictation: "単語を書き取り",
+            totalWords: "全体で{{count}}語",
           },
           backToList: "単語帳一覧に戻る",
           wordbookList: {

@@ -38,6 +38,7 @@ export interface Word {
   note: string;
   wordbookId: string;
   createdAt: Timestamp;
+  lastReviewed?: Timestamp | null;
 }
 
 // Custom part-of-speech tags
@@ -216,6 +217,30 @@ export const updateWord = async (
     wordId
   );
   await updateDoc(ref, updateData);
+};
+
+// Update mastery and last reviewed timestamp for a word
+export const updateWordMastery = async (
+  userId: string,
+  wordbookId: string,
+  wordId: string,
+  mastery: number
+): Promise<void> => {
+  const ref = doc(
+    db,
+    "users",
+    userId,
+    "wordbooks",
+    wordbookId,
+    "words",
+    wordId
+  );
+  const now = Timestamp.now();
+  await updateDoc(ref, { mastery, lastReviewed: now });
+
+  // Record review history
+  const reviewsRef = collection(ref, "reviews");
+  await addDoc(reviewsRef, { mastery, reviewedAt: now });
 };
 
 // Delete word

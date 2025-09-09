@@ -19,16 +19,43 @@ import { signOut } from "firebase/auth";
 
 // Wordbook list component
 import WordbookList from "@/components/wordbooks/wordbook-list";
+import ProgressCircle from "@/components/study/ProgressCircle";
+import {
+  getWordbooksByUserId,
+  getWordsByWordbookId,
+  type Word,
+} from "@/lib/firestore-service";
 
 export default function HomeClient() {
   const { t } = useTranslation();
   const { user, loading, auth } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [avgMastery, setAvgMastery] = useState<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    async function loadAvg() {
+      const wordbooks = await getWordbooksByUserId(user.uid);
+      let words: Word[] = [];
+      for (const wb of wordbooks) {
+        const ws = await getWordsByWordbookId(user.uid, wb.id);
+        words = words.concat(ws);
+      }
+      if (!words.length) {
+        setAvgMastery(0);
+        return;
+      }
+      const avg =
+        words.reduce((sum, w) => sum + (w.mastery || 0), 0) / words.length;
+      setAvgMastery(avg);
+    }
+    loadAvg();
+  }, [user]);
 
   const handleAuthSuccess = () => setIsAuthOpen(false);
   const handleLogout = async () => {
@@ -60,6 +87,12 @@ export default function HomeClient() {
               </Button>
             </div>
           </div>
+
+          {avgMastery !== null && (
+            <div className="flex justify-center">
+              <ProgressCircle progress={avgMastery} />
+            </div>
+          )}
 
           {/* Wordbook list (load / create / rename / delete) */}
           <WordbookList />

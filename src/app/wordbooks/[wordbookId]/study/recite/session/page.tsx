@@ -13,6 +13,7 @@ import {
   updateWord,
   Word,
 } from "@/lib/firestore-service";
+import "@/i18n/i18n-client";
 
 interface PageProps {
   params: Promise<{ wordbookId: string }>;
@@ -104,9 +105,11 @@ function computeMastery(current: number, choice: Answer): number {
     case "memorized":
       return 100;
     case "impression":
-      return Math.round(current + (40 - current) * 0.3);
+      // move slightly toward 40
+      return Math.round(current + (40 - current) * 0.15);
     case "familiar":
-      return Math.round(current + (70 - current) * 0.3);
+      // move slightly toward 70
+      return Math.round(current + (70 - current) * 0.15);
   }
 }
 
@@ -205,9 +208,17 @@ export default function ReciteSessionPage({ params }: PageProps) {
     sessionWords.length > 0
       ? ((index + (showDetails ? 1 : 0)) / sessionWords.length) * 100
       : 0;
+  const progressColor =
+    progressPercent < 25
+      ? "bg-red-500"
+      : progressPercent < 50
+      ? "bg-orange-500"
+      : progressPercent < 75
+      ? "bg-yellow-500"
+      : "bg-green-500";
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-8 space-y-6">
       <div className="flex items-center justify-between">
         <Link
           href={`/wordbooks/${wordbookId}/study/recite`}
@@ -225,7 +236,7 @@ export default function ReciteSessionPage({ params }: PageProps) {
           </Button>
         </div>
       </div>
-      <h1 className="text-center text-2xl font-bold">
+      <h1 className="text-center text-3xl sm:text-4xl font-bold">
         <span suppressHydrationWarning>
           {mounted ? t("studyPage.recite") : ""}
         </span>
@@ -233,14 +244,14 @@ export default function ReciteSessionPage({ params }: PageProps) {
 
       {step === "reciting" && sessionWords.length > 0 && (
         <div className="max-w-md mx-auto space-y-4">
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-base sm:text-lg text-muted-foreground">
             {t("recite.progress", {
               current: index + 1,
               total: sessionWords.length,
             })}
           </p>
-          <div className="border rounded p-6 space-y-4 text-center">
-            <div className="text-2xl font-bold">
+          <div className="border rounded p-4 sm:p-6 space-y-4 text-center">
+            <div className="text-3xl sm:text-4xl font-bold">
               {sessionWords[index].word}
             </div>
             {showDetails && (
@@ -251,40 +262,56 @@ export default function ReciteSessionPage({ params }: PageProps) {
                 <div>
                   {t("wordList.pinyin")}: {sessionWords[index].pinyin}
                 </div>
-                <div>
+                <div className="whitespace-pre-line">
                   {t("wordList.example")}: {sessionWords[index].exampleSentence}
                 </div>
-                <div>
-                  {t("wordList.exampleTranslation")}:
-                  {" "}
+                <div className="whitespace-pre-line">
+                  {t("wordList.exampleTranslation")}:{" "}
                   {sessionWords[index].exampleTranslation}
                 </div>
               </div>
             )}
             {!showDetails ? (
-              <div className="grid grid-cols-2 gap-2">
-                <Button onClick={() => handleAnswer("unknown")}>
-                  {t("wordList.masteryLevels.unknown")}
-                </Button>
-                <Button onClick={() => handleAnswer("impression")}>
-                  {t("wordList.masteryLevels.impression")}
-                </Button>
-                <Button onClick={() => handleAnswer("familiar")}>
-                  {t("wordList.masteryLevels.familiar")}
-                </Button>
-                <Button onClick={() => handleAnswer("memorized")}>
-                  {t("wordList.masteryLevels.memorized")}
-                </Button>
-              </div>
+              <>
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1 px-2 py-2 text-lg sm:text-xl bg-red-500 text-white hover:bg-red-600"
+                    onClick={() => handleAnswer("unknown")}
+                  >
+                    {t("wordList.masteryLevels.unknown")}
+                  </Button>
+                  <Button
+                    className="flex-1 px-2 py-2 text-lg sm:text-xl bg-orange-500 text-white hover:bg-orange-600"
+                    onClick={() => handleAnswer("impression")}
+                  >
+                    {t("wordList.masteryLevels.impression")}
+                  </Button>
+                  <Button
+                    className="flex-1 px-2 py-2 text-lg sm:text-xl bg-yellow-500 text-black hover:bg-yellow-600"
+                    onClick={() => handleAnswer("familiar")}
+                  >
+                    {t("wordList.masteryLevels.familiar")}
+                  </Button>
+                  <Button
+                    className="flex-1 px-2 py-2 text-lg sm:text-xl bg-green-500 text-black hover:bg-green-600"
+                    onClick={() => handleAnswer("memorized")}
+                  >
+                    {t("wordList.masteryLevels.memorized")}
+                  </Button>
+                </div>
+                <p className="text-center text-base text-muted-foreground">
+                  {t("recite.answerHint")}
+                </p>
+              </>
             ) : (
               <Button className="w-full" onClick={next}>
                 {t("recite.next")}
               </Button>
             )}
           </div>
-          <div className="h-2 bg-muted rounded">
+          <div className="h-3 sm:h-4 bg-muted rounded">
             <div
-              className="h-2 bg-primary rounded"
+              className={`h-3 sm:h-4 rounded ${progressColor}`}
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -305,6 +332,11 @@ export default function ReciteSessionPage({ params }: PageProps) {
             <Link href={`/wordbooks/${wordbookId}/study`} className="w-full">
               <Button className="w-full" variant="outline">
                 {t("recite.finish")}
+              </Button>
+            </Link>
+            <Link href={`/wordbooks/${wordbookId}`} className="w-full">
+              <Button className="w-full" variant="outline">
+                {t("backToWordbook")}
               </Button>
             </Link>
           </div>

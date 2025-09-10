@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { signOut } from "firebase/auth";
 import { useTranslation } from "react-i18next";
 import { CircleProgress } from "@/components/ui/circle-progress";
+import "@/i18n/i18n-client";
 
 interface PageProps {
   params: Promise<{ wordbookId: string }>;
@@ -44,16 +45,16 @@ export default function StudyPage({ params }: PageProps) {
 
   const masteryColor = `hsl(${(overallMastery / 100) * 120}, 80%, 45%)`;
 
-  return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <Link
-          href={`/wordbooks/${wordbookId}`}
-          className="text-sm text-muted-foreground"
-          suppressHydrationWarning
-        >
-          &larr; {mounted ? t("backToList") : ""}
-        </Link>
+    return (
+      <div className="p-4 sm:p-8 space-y-6">
+        <div className="flex items-center justify-between">
+          <Link
+            href={`/wordbooks/${wordbookId}`}
+            className="text-base text-muted-foreground"
+            suppressHydrationWarning
+          >
+            &larr; {mounted ? t("backToList") : ""}
+          </Link>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Button variant="outline" onClick={handleLogout}>
@@ -64,38 +65,40 @@ export default function StudyPage({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-6">
-        <CircleProgress value={overallMastery} />
-        <div>{t("studyPage.totalWords", { count: wordCount })}</div>
-        <div className="flex items-center gap-2">
-          <span>{t("wordList.overallMastery")}</span>
-          <div className="h-2 w-40 rounded bg-gray-200">
-            <div
-              className="h-2 rounded"
-              style={{ width: `${overallMastery}%`, backgroundColor: masteryColor }}
-            />
+        <div className="flex flex-col items-center gap-6">
+          <CircleProgress value={overallMastery} />
+          <div className="text-lg sm:text-xl">
+            {t("studyPage.totalWords", { count: wordCount })}
           </div>
-          <span>{overallMastery.toFixed(1)}%</span>
-        </div>
-        <div className="flex gap-4 mt-4">
-          <Button
-            asChild
-            className="bg-orange-500 text-black hover:bg-orange-600"
-          >
-            <Link href={`/wordbooks/${wordbookId}/study/recite`}>
-              {t("studyPage.recite")}
-            </Link>
-          </Button>
-          <Button
-            asChild
-            className="bg-green-500 text-black hover:bg-green-600"
-          >
-            <Link href={`/wordbooks/${wordbookId}/study/dictation`}>
-              {t("studyPage.dictation")}
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2 text-base sm:text-lg">
+            <span>{t("wordList.overallMastery")}</span>
+            <div className="h-3 sm:h-4 w-40 rounded bg-gray-200">
+              <div
+                className="h-3 sm:h-4 rounded"
+                style={{ width: `${overallMastery}%`, backgroundColor: masteryColor }}
+              />
+            </div>
+            <span>{overallMastery.toFixed(1)}%</span>
+          </div>
+          <div className="flex gap-4 mt-4">
+            <Button
+              asChild
+              className="bg-orange-500 text-black hover:bg-orange-600 text-lg"
+            >
+              <Link href={`/wordbooks/${wordbookId}/study/recite`}>
+                {t("studyPage.recite")}
+              </Link>
+            </Button>
+            <Button
+              asChild
+              className="bg-green-500 text-black hover:bg-green-600 text-lg"
+            >
+              <Link href={`/wordbooks/${wordbookId}/study/dictation`}>
+                {t("studyPage.dictation")}
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
